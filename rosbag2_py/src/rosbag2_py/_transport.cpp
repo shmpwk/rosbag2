@@ -215,7 +215,11 @@ public:
       // recorder->stop() to be able to send notifications about bag split and close.
       auto spin_thread = std::thread(
         [&exec]() {
-          exec->spin();
+          const auto time_step = std::chrono::milliseconds(1);
+          while (rclcpp::ok()) {
+            exec->spin_some();
+            std::this_thread::sleep_for(time_step);
+          }
         });
       {
         // Release the GIL for long-running record, so that calling Python code
